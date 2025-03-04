@@ -23,4 +23,4 @@ st.line_chart(df)
 
 # Display an Image
 st.subheader("Sample Image")
-st.ima
+st.image
