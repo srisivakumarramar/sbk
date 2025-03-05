@@ -43,7 +43,7 @@ def generate_wordcloud(links):
 # Streamlit UI
 st.title("Website Link Extractor & WordCloud Generator")
 
-url = st.text_input("Enter website URL:", "https://example.com")
+url = st.text_input("Enter website URL:", "https://realpython.com")
 
 if st.button("Extract Links"):
     with st.spinner("Extracting links..."):
