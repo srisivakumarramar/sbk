@@ -4,11 +4,4 @@ beautifulsoup4
 bs4
 WordCloud
 pandas
-matplotlib
-requests
-openpyxl
-shap
-numpy
-train_test_split
-RandomForestClassifier
-accuracy_score
+
