@@ -1,4 +1,9 @@
+streamlit
 matplotlib
 beautifulsoup4
 bs4
 WordCloud
+pandas
+matplotlib
+requests
+openpyxl
