@@ -78,11 +78,6 @@ if st.button("🚀 Extract Links"):
         if file_path and extracted_links:
             st.success(f"✅ Extracted links have been saved to: {file_path}")
 
-            # Display extracted links
-            st.subheader("🔗 Extracted Links:")
-            for subject, url in extracted_links.items():
-                st.write(f"**{subject}:** {url}")
-
             # Provide a download button
             with open(file_path, "rb") as file:
                 btn = st.download_button(
@@ -90,6 +85,11 @@ if st.button("🚀 Extract Links"):
                     data=file,
                     file_name=os.path.basename(file_path),
                     mime="text/plain"
+                    
+            # Display extracted links
+            st.subheader("🔗 Extracted Links:")
+            for subject, url in extracted_links.items():
+                st.write(f"**{subject}:** {url}")
                 )
     else:
         st.warning("⚠️ Please enter all required fields.")
