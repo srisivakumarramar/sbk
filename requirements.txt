@@ -1,1 +1,3 @@
 matplotlib
+BeautifulSoup
+bs4
