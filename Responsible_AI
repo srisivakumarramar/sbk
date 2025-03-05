@@ -1,0 +1,76 @@
+import streamlit as st
+import pandas as pd
+import shap
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.model_selection import train_test_split
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import accuracy_score
+
+# Set Streamlit page config
+st.set_page_config(page_title="Responsible AI - Loan Approval", layout="wide")
+
+# Title
+st.title("Responsible AI - Loan Approval System")
+
+st.write("""
+This AI system predicts whether a loan application should be **approved** or **rejected**.
+To ensure fairness:
+- AI should not discriminate based on gender, age, or income.
+- AI should explain why it made a decision.
+- AI should be checked for bias.
+""")
+
+# Sidebar for dataset upload
+uploaded_file = st.sidebar.file_uploader("Upload Loan Applicant Data (CSV)", type=["csv"])
+
+if uploaded_file:
+    df = pd.read_csv(uploaded_file)
+
+    # Show dataset preview
+    st.write("### Loan Applicant Data", df.head())
+
+    # Select target variable (Loan Approval Status)
+    target = st.sidebar.selectbox("Select Target Variable (Loan Approved Yes/No)", df.columns)
+
+    # Feature selection (excluding target)
+    features = [col for col in df.columns if col != target]
+
+    # Train/Test Split
+    X_train, X_test, y_train, y_test = train_test_split(
+        df[features], df[target], test_size=0.2, random_state=42
+    )
+
+    # Train AI Model (Random Forest)
+    model = RandomForestClassifier(n_estimators=100, random_state=42)
+    model.fit(X_train, y_train)
+
+    # Make Predictions
+    y_pred = model.predict(X_test)
+
+    # Model Performance
+    acc = accuracy_score(y_test, y_pred)
+    st.write(f"AI Loan Approval Accuracy: {acc:.2f}")
+
+    # Explainability with SHAP
+    explainer = shap.Explainer(model, X_train)
+    shap_values = explainer(X_test)
+
+    # SHAP Feature Importance Plot
+    st.write("### Why AI Approves or Rejects Loans (Feature Importance)")
+    fig, ax = plt.subplots()
+    shap.summary_plot(shap_values, X_test, show=False)
+    st.pyplot(fig)
+
+    # Bias Detection
+    sensitive_attr = st.sidebar.selectbox("Check AI Fairness (Select a Sensitive Attribute)", df.columns)
+
+    if sensitive_attr:
+        bias_metric = df.groupby(sensitive_attr)[target].mean()
+        st.write(f"Does AI Favor Any Group Based on {sensitive_attr}?")
+        st.bar_chart(bias_metric)
+
+    st.success("AI fairness check completed.")
+else:
+    st.info("Upload a dataset to analyze loan approval fairness.")
+
