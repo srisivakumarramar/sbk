@@ -1,95 +1,69 @@
 import streamlit as st
 import requests
 from bs4 import BeautifulSoup
+import pandas as pd
+
 import os
+from wordcloud import WordCloud
+import matplotlib.pyplot as plt
 
 
-def main():
-    st.title("Hello, Streamlit!")
-    user_input = st.text_input("Enter something:")
-    if st.button("Submit"):
-        st.write(f"You entered: {user_input}")
-
-
-if __name__ == "__main__":
-    main()
-
-# Get user inputs
-website_url = st.text_input("🌍 Enter the website URL:", placeholder="https://example.com")
-base_path = st.text_input("📁 Enter the directory path to save the file (e.g., D:/MyScrapedData/):")
-file_name = st.text_input("📝 Enter the file name (without extension):", "extracted_links")
-
-
-# Function to extract links and save with versioning
-def extract_links(website_url, base_path, file_name):
+# Function to extract links from a webpage
+def extract_links(url):
     try:
-        # Ensure directory exists
-        if not os.path.exists(base_path):
-            os.makedirs(base_path)  # Create directory if it doesn't exist
-
-        # Fetch webpage content
-        response = requests.get(website_url)
-        response.raise_for_status()  # Raise error for bad responses
+        response = requests.get(url)
+response.raise_for_status()
         soup = BeautifulSoup(response.text, 'html.parser')
-
-        # Extract links
-        links_dict = {}
-        for link in soup.find_all('a', href=True):
-            text = link.get_text(strip=True) or "No Text"
-            url = link['href']
-
-            # Convert relative URLs to absolute URLs
-            if not url.startswith(('http://', 'https://')):
-                url = requests.compat.urljoin(website_url, url)
-
-            links_dict[text] = url
-
-        # Determine file versioning
-        version = 1
-        file_path = os.path.join(base_path, f"{file_name}_v{version}.txt")
-        while os.path.exists(file_path):
-            version += 1
-            file_path = os.path.join(base_path, f"{file_name}_v{version}.txt")
-
-        # Save extracted links to a file
-        with open(file_path, "w", encoding="utf-8") as file:
-            for subject, url in links_dict.items():
-                file.write(f"{subject}: {url}\n")
-
-        return file_path, links_dict
-
-    except requests.exceptions.RequestException as e:
-        st.error(f"❌ Error fetching the website: {e}")
-        return None, None
-
-    except PermissionError:
-        st.error("❌ Permission denied! Run the script as Administrator or choose a different path.")
-        return None, None
-
-    except FileNotFoundError:
-        st.error("❌ The specified path does not exist. Ensure the directory is correct.")
-        return None, None
+        links = {a.text.strip() or "No Title": a['href'] for a in soup.find_all('a', href=True)}
+        return links
+    except Exception as e:
+st.error(f"Error fetching links: {e}")
+        return {}
 
 
-# Button to execute extraction
-if st.button("🚀 Extract Links"):
-    if website_url and base_path and file_name:
-        file_path, extracted_links = extract_links(website_url, base_path, file_name)
-        if file_path and extracted_links:
-            st.success(f"✅ Extracted links have been saved to: {file_path}")
+# Function to save links as TXT
+def save_as_txt(links, filename):
+    with open(filename, "w", encoding="utf-8") as file:
+        for title, link in links.items():
+file.write(f"{title}: {link}\n")
 
-            # Provide a download button
-            with open(file_path, "rb") as file:
-                btn = st.download_button(
-                    label="📥 Download Extracted Links",
-                    data=file,
-                    file_name=os.path.basename(file_path),
-                    mime="text/plain"
-                    
-            # Display extracted links
-            st.subheader("🔗 Extracted Links:")
-            for subject, url in extracted_links.items():
-                st.write(f"**{subject}:** {url}")
-                )
-    else:
-        st.warning("⚠️ Please enter all required fields.")
+
+# Function to save links as XLSX
+def save_as_xlsx(links, filename):
+df = pd.DataFrame(list(links.items()), columns=["Title", "URL"])
+df.to_excel(filename, index=False)
+
+
+# Function to generate a WordCloud
+def generate_wordcloud(links):
+    text = " ".join(links.keys())
+wordcloud = WordCloud(width=800, height=400, background_color="white").generate(text)
+    return wordcloud
+
+
+# Streamlit UI
+st.title("Website Link Extractor &WordCloud Generator")
+
+url = st.text_input("Enter website URL:", "https://example.com")
+
+if st.button("Extract Links"):
+    with st.spinner("Extracting links..."):
+        links = extract_links(url)
+        if links:
+st.success(f"Extracted {len(links)} links!")
+
+            # Save files
+txt_filename = "extracted_links.txt"
+xlsx_filename = "extracted_links.xlsx"
+save_as_txt(links, txt_filename)
+save_as_xlsx(links, xlsx_filename)
+
+st.download_button(label="Download TXT", data=open(txt_filename, "rb"), file_name=txt_filename)
+st.download_button(label="Download XLSX", data=open(xlsx_filename, "rb"), file_name=xlsx_filename)
+
+           # Generate and display WordCloud
+wordcloud = generate_wordcloud(links)
+            fig, ax = plt.subplots(figsize=(8, 4))
+ax.imshow(wordcloud, interpolation="bilinear")
+ax.axis("off")
+st.pyplot(fig)
