@@ -41,7 +41,7 @@ def generate_wordcloud(links):
 
 
 # Streamlit UI
-st.markdown("<h3 style='text-align: center;font-weight: bold;color:Tomato,background-color:DodgerBlue;'>Extract All Links in a Click – Streamlit Cloud Makes It Effortless!</h3>", unsafe_allow_html=True)
+st.markdown("<h5 style='text-align: center;font-weight: bold;color:Tomato,background-color:DodgerBlue;'>Extract All Links in a Click – Streamlit Cloud Makes It Effortless!</h5>", unsafe_allow_html=True)
 # st.title("Extract Website Links & Visualize Insights in Seconds")
 
 url = st.text_input("Enter website URL:", "https://realpython.com")
