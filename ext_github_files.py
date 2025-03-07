@@ -1,5 +1,6 @@
 import streamlit as st
 import requests
+import pandas as pd
 
 def get_github_filenames(owner, repo, branch="main"):
     url = f"https://api.github.com/repos/{owner}/{repo}/git/trees/{branch}?recursive=1"
@@ -23,6 +24,17 @@ def main():
         if filenames:
             st.write("### List of Files:")
             st.write(filenames)
+            
+            # Convert list to DataFrame for download
+            df = pd.DataFrame(filenames, columns=["Filenames"])
+            csv = df.to_csv(index=False).encode('utf-8')
+            
+            st.download_button(
+                label="Download File List",
+                data=csv,
+                file_name="github_filenames.csv",
+                mime="text/csv"
+            )
         else:
             st.error("Failed to fetch filenames. Check the repository details.")
 
