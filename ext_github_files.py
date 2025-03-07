@@ -14,8 +14,8 @@ def get_github_filenames(owner, repo, branch="main"):
 def main():
     st.title("GitHub Repository File Extractor")
     
-    owner = st.text_input("Enter GitHub Username/Organization", "octocat")
-    repo = st.text_input("Enter Repository Name", "Hello-World")
+    owner = st.text_input("Enter GitHub Username/Organization", "srisivakumarramar")
+    repo = st.text_input("Enter Repository Name", "sbk")
     branch = st.text_input("Enter Branch Name", "main")
     
     if st.button("Fetch Filenames"):
