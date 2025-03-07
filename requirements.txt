@@ -5,4 +5,7 @@ bs4
 WordCloud
 pandas
 openpyxl
+ChatOllama
+SystemMessage
+HumanMessage
 
