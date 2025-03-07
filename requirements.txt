@@ -4,4 +4,5 @@ beautifulsoup4
 bs4
 WordCloud
 pandas
+openpyxl
 
