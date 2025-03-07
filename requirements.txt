@@ -6,6 +6,7 @@ WordCloud
 pandas
 openpyxl
 ChatOllama
+systemmessage
 SystemMessage
 HumanMessage
 
