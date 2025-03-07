@@ -20,8 +20,8 @@ def main():
     st.title("View Your GitHub Files Instantly!")
     st.write("Enter a GitHub repository to fetch and view all its files.")
 
-    owner = st.text_input("GitHub Username/Organization", "octocat")
-    repo = st.text_input("Repository Name", "Hello-World")
+    owner = st.text_input("GitHub Username/Organization", "srisivakumarramar")
+    repo = st.text_input("Repository Name", "sbk")
     branch = st.text_input("Branch Name", "main")
 
     if st.button("Fetch Files"):
