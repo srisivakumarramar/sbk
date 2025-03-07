@@ -1,6 +1,5 @@
 from langchain_community.chat_models import ChatOllama
-from langchain.schema import  HumanMessage
-from langchain_core.messages SystemMessage
+from langchain_core.messages import SystemMessage, HumanMessage
 
 def customer_support_bot(user_query):
     # Initialize Ollama model
